@@ -59,7 +59,7 @@ Your bot needs two secret keys to connect to Telegram and Google's AI.
 
 This is a critical step for keeping your secret keys safe.
 
-1.  In your project's main folder (the same place as `index.tsx` and `package.json`), create a new file and name it **exactly** `.env` (the dot at the beginning is important).
+1.  In your project's main folder (the same place as `index.js` and `package.json`), create a new file and name it **exactly** `.env` (the dot at the beginning is important).
 2.  Open this `.env` file with a text editor and add the following content. Paste your keys where indicated.
 
 ```env
@@ -87,7 +87,7 @@ Your bot is now running from your computer. To stop it, go back to your terminal
 
 ---
 
-## Part 2: Deploying for 24/7 Uptime (Using Render's Free Tier)
+## Part 2: Deploying for 24/7 Uptime (Recommended)
 
 To make your bot available 24/7, you need to host it on a server. We will use a service called **Render**, which has a free plan perfect for this.
 
@@ -108,14 +108,28 @@ Hosting services like Render connect to your code through a Git repository.
 
 3.  **Create a New Repository:** On GitHub, click the `+` icon in the top-right and select "New repository". Give it a name (e.g., `telegram-vent-bot`) and create it.
 
-4.  **Upload Your Code:** Follow the instructions on your new GitHub repository page under the section "...or push an existing repository from the command line" to upload your project files.
+4.  **Upload Your Code:** Follow the instructions on your new GitHub repository page under the section "...or push an existing repository from the command line". The commands will look something like this:
+    ```bash
+    # Connect your local folder to your GitHub repo
+    git remote add origin https://github.com/your-username/your-repo-name.git
+
+    # Prepare your files for upload
+    git branch -M main
+    git add .
+
+    # Save your files with a message
+    git commit -m "Initial commit"
+
+    # Upload your files
+    git push -u origin main
+    ```
 
 ### Step 2: Deploy on Render.com
 
 1.  **Sign Up:** Go to [Render.com](https://render.com) and sign up using your GitHub account.
 
 2.  **Create a New Service:**
-    *   On the Render Dashboard, click **New +** and select **Web Service**. This is their free tier.
+    *   On the Render Dashboard, click **New +** and select **Background Worker**.
     *   Connect your GitHub account and select the repository you just created.
 
 3.  **Configure the Service:**
@@ -123,7 +137,6 @@ Hosting services like Render connect to your code through a Git repository.
     *   **Region:** Choose a region close to you.
     *   **Branch:** Select `main`.
     *   **Start Command:** Enter `npm start`.
-    *   **Instance Type:** Make sure you select the **Free** plan.
 
 4.  **Add Your Secret Keys (Environment Variables):**
     *   Scroll down to the **Environment** section. This is where you'll put your API keys, just like you did with the `.env` file for local testing.
@@ -137,10 +150,8 @@ Hosting services like Render connect to your code through a Git repository.
         *   **Value:** Paste your Telegram Bot Token.
 
 5.  **Launch:**
-    *   Scroll to the bottom and click **Create Web Service**.
-    *   Render will now install your dependencies and run your start command. The code you have will automatically configure the webhook with Telegram.
-    *   You can watch the progress in the "Logs" tab. When it's finished, you'll see messages like: `Webhook successfully set...` and `Bot is online, listening for webhooks...`
+    *   Scroll to the bottom and click **Create Background Worker**.
+    *   Render will now install your dependencies (`npm install`) and run your start command (`npm start`).
+    *   You can watch the progress in the "Logs" tab. When it's finished, you'll see the message: `Bot is online and listening for messages...`
 
-**Congratulations!** Your bot is now running on a server and will be online 24/7.
-
-**Note on Free Hosting:** Render's free Web Services "spin down" (go to sleep) after 15 minutes of inactivity. This means the first message your bot receives after a period of rest may take 20-30 seconds to respond as the service wakes up. All messages after that will be instant. This is a normal trade-off for a free 24/7 service.
+**Congratulations!** Your bot is now running on a server and will be online 24/7. Render will automatically redeploy your bot whenever you push new code changes to your GitHub repository's `main` branch.
