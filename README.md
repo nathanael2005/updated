@@ -1,3 +1,22 @@
+# === HOW TO FIX THE DEPLOYMENT ERROR ===
+
+**THE ONLY WAY TO FIX THE ERROR IS TO DELETE THE `index.tsx` FILE.**
+
+As long as `index.tsx` exists, your project will fail to deploy.
+
+## Please follow these exact steps on the GitHub website:
+
+1.  Go to your main repository page (the page that lists all your files).
+2.  From the list of files, click on the file named **`index.tsx`**.
+3.  On the next page, look in the top-right corner for the **trash can icon (🗑️)** and click it.
+4.  Scroll to the bottom and click the green **"Commit changes"** button.
+
+Once you have deleted the file, the deployment will work correctly.
+
+---
+---
+---
+
 # 🚨 IMPORTANT: HOW TO FIX THE DEPLOYMENT ERROR 🚨
 
 The error you are seeing is because your `package.json` file on GitHub is an old version with the wrong start command.
