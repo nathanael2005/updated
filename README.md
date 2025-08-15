@@ -1,3 +1,57 @@
+# 🚨 IMPORTANT: HOW TO FIX THE DEPLOYMENT ERROR 🚨
+
+The error you are seeing is because your `package.json` file on GitHub is an old version with the wrong start command.
+
+Please follow these steps **exactly** to fix it. This will solve the problem.
+
+### Step 1: Go to your `package.json` file on GitHub
+
+1.  Go to your main repository page on GitHub.
+2.  From the list of files, click on **`package.json`**.
+
+### Step 2: Edit the file
+
+1.  On the `package.json` page, click the **pencil icon (✏️)** in the top-right corner to edit the file.
+
+### Step 3: Replace the content
+
+1.  **Delete everything** currently in the text box. The file should be completely empty.
+2.  **Copy the code below** and **paste it** into the empty text box.
+
+```json
+{
+  "name": "telegram-vent-bot",
+  "version": "1.0.0",
+  "description": "A supportive Telegram bot for students using Gemini.",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "@google/genai": "^0.7.0",
+    "telegraf": "^4.16.3",
+    "dotenv": "^16.4.5"
+  }
+}
+```
+
+### Step 4: Save the changes
+
+1.  Scroll to the bottom of the page.
+2.  Click the green **"Commit changes"** button.
+
+### Step 5: Manually Deploy on Render
+
+1.  Go to your dashboard on **Render.com**.
+2.  Click the **"Manual Deploy"** button at the top-right.
+3.  Select **"Deploy latest commit"**.
+
+Your bot will now deploy successfully. After this is fixed, you should also **delete the `index.tsx` file** from GitHub to keep your project clean.
+
+---
+---
+
 # Telegram Vent Bot - Setup and Run Instructions
 
 This guide contains two parts:
