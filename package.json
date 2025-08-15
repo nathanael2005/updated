@@ -1,0 +1,20 @@
+{
+  "name": "telegram-vent-bot",
+  "version": "1.0.0",
+  "description": "A supportive Telegram bot for students using Gemini.",
+  "main": "index.tsx",
+  "type": "module",
+  "scripts": {
+    "start": "node --loader ts-node/esm index.tsx"
+  },
+  "dependencies": {
+    "@google/genai": "^0.7.0",
+    "telegraf": "^4.16.3",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}
