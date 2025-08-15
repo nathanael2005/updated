@@ -9,6 +9,9 @@
 import { Telegraf } from 'telegraf';
 import { GoogleGenAI } from '@google/genai';
 import 'dotenv/config'; // Loads environment variables from a .env file
+import http from 'http';
+import fs from 'fs';
+import path from 'path';
 
 // --- Initialization & Safety Check ---
 // IMPORTANT: You need to create a .env file with your API keys.
@@ -40,7 +43,7 @@ RULES:
 // This runs when a user first starts a chat with the bot.
 bot.start((ctx) => {
   ctx.replyWithMarkdown(
-    `Hello ${ctx.from.first_name}! ??\n\nI'm here to listen. This is a safe and anonymous space for you to vent or confess anything on your mind. Just send me a message.\n\n*Disclaimer:* I am an AI bot and not a replacement for a mental health professional. If you are in crisis, please seek professional help immediately.\n\nType /resources to see a list of helpful organizations.`
+    `Hello ${ctx.from.first_name}! ðŸ‘‹\n\nI'm here to listen. This is a safe and anonymous space for you to vent or confess anything on your mind. Just send me a message.\n\n*Disclaimer:* I am an AI bot and not a replacement for a mental health professional. If you are in crisis, please seek professional help immediately.\n\nType /resources to see a list of helpful organizations.`
   );
 });
 
@@ -48,9 +51,9 @@ bot.start((ctx) => {
 bot.command('resources', (ctx) => {
     ctx.replyWithMarkdown(
         `*Here are some helpful resources:*\n\n` +
-        `• *Crisis Text Line:* Text HOME to 741741 (US/Canada) or 85258 (UK)\n` +
-        `• *988 Suicide & Crisis Lifeline:* Call or text 988 (US/Canada)\n` +
-        `• *The Trevor Project (for LGBTQ youth):* 1-866-488-7386\n\n` +
+        `â€¢ *Crisis Text Line:* Text HOME to 741741 (US/Canada) or 85258 (UK)\n` +
+        `â€¢ *988 Suicide & Crisis Lifeline:* Call or text 988 (US/Canada)\n` +
+        `â€¢ *The Trevor Project (for LGBTQ youth):* 1-866-488-7386\n\n` +
         `Remember, reaching out for help is a sign of strength.`
     );
 });
@@ -86,11 +89,54 @@ bot.on('text', async (ctx) => {
   }
 });
 
-// --- Launch Bot ---
+// --- Launch Bot & Web Server ---
 bot.launch().then(() => {
     console.log("Bot is online and listening for messages...");
 });
 
+// This web server's job is to serve the landing page and keep the Render service alive.
+const PORT = process.env.PORT || 3000;
+const server = http.createServer((req, res) => {
+    let filePath = '.' + req.url;
+    if (filePath === './') {
+        filePath = './index.html';
+    }
+
+    const extname = String(path.extname(filePath)).toLowerCase();
+    const mimeTypes = {
+        '.html': 'text/html',
+        '.css': 'text/css',
+    };
+
+    const contentType = mimeTypes[extname] || 'application/octet-stream';
+
+    fs.readFile(filePath, (error, content) => {
+        if (error) {
+            if (error.code == 'ENOENT') {
+                res.writeHead(404);
+                res.end('404 Not Found');
+            } else {
+                res.writeHead(500);
+                res.end('Server error: ' + error.code);
+            }
+        } else {
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(content, 'utf-8');
+        }
+    });
+});
+
+server.listen(PORT, () => {
+    console.log(`Web server started on port ${PORT}. This is required to run on Render's free Web Service plan.`);
+});
+
+
 // These lines help the bot shut down gracefully if the server is stopped.
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+process.once('SIGINT', () => {
+    bot.stop('SIGINT')
+    server.close();
+});
+process.once('SIGTERM', () => {
+    bot.stop('SIGTERM')
+    server.close();
+});
